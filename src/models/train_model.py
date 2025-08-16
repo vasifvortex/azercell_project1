@@ -1,6 +1,5 @@
 import os
 import sys
-from sklearn.metrics import classification_report
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import RobustScaler, PowerTransformer
@@ -45,6 +44,9 @@ def train_model(df):
         "data_compl_usg_local_m4",
     ]
     categorical_features = X.select_dtypes(include=["object"]).columns.tolist()
+
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
 
     # Select only columns you want
     X = X[numeric_features + categorical_features]
@@ -98,7 +100,6 @@ def data_usage_production_train():
     df = desereliazer("data_usage_production.pkl")
     model = train_model(df)
     base_path = r"C:\Users\user\azercell_project1\src\models"
-    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
     model_path = os.path.join(base_path, "data_usage_production_train_model.pkl")
     save_model(model, model_path)
 
@@ -109,6 +110,9 @@ def ramen_ratings_train_model(df):
 
     numeric_features = X.columns[X.dtypes == "float32"]
     categorical_features = ["brand", "style", "country"]
+
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
 
     # Select only columns you want
     X = X[numeric_features + categorical_features]
@@ -158,7 +162,6 @@ def ramen_ratings_train():
     df = desereliazer("ramen-ratings.pkl")
     model = ramen_ratings_train_model(df)
     base_path = r"C:\Users\user\azercell_project1\src\models"
-    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
     model_path = os.path.join(base_path, "ramen-ratings_train_model.pkl")
     save_model(model, model_path)
 
@@ -169,6 +172,9 @@ def multisim_dataset_train_model(df):
     X, y = shuffle(X, y, random_state=42)
     numeric_features = X.columns[X.dtypes == "float64"].append(X.columns[X.dtypes == "int64"])
     categorical_features = X.columns[X.dtypes == "object"]
+
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
 
     # Select only columns you want
     X = X[numeric_features + categorical_features]
@@ -266,15 +272,13 @@ def multisim_dataset_train_model(df):
     final_pipeline.fit(X_train, y_train)
     print("Final model test accuracy:", final_pipeline.score(X_test, y_test))
 
-    y_pred = final_pipeline.predict(X_test)
-    print(classification_report(y_test, y_pred))
+    return final_pipeline
 
 
 def multisim_dataset_train():
     df = desereliazer("multisim_dataset.pkl")
     model = multisim_dataset_train_model(df)
     base_path = r"C:\Users\user\azercell_project1\src\models"
-    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
     model_path = os.path.join(base_path, "multisim_dataset_train_model.pkl")
     save_model(model, model_path)
 
