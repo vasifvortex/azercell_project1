@@ -1,15 +1,17 @@
 import os
-import sys
+import pickle
 import shutil
+import sys
+
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import pickle
-from src.visualization.visualize import desereliazer
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from src.visualization.visualize import desereliazer
 
 
 def serializer(df, pickle_file_path):

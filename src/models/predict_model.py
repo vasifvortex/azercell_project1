@@ -1,6 +1,9 @@
 import os
 import pickle
 from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.metrics import classification_report
 
 
 def load_model(model_path):
@@ -35,13 +38,17 @@ def test_model(model, df):
     ]
     categorical_features = X.select_dtypes(include=["object"]).columns.tolist()
 
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
+
     X = X[numeric_features + categorical_features]
 
-    preds = model.predict(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    print("Sample predictions vs actuals:")
-    for pred, actual in zip(preds[:5], y.iloc[:5]):
-        print(f"Predicted: {pred:.3f}, Actual: {actual:.3f}")
+    y_pred = model.predict(X_test)
+
+    r2 = r2_score(y_test, y_pred)
+    print(f"R²: {r2:.3f}")
 
 
 def ramen_ratings_test_model(model, df):
@@ -51,14 +58,17 @@ def ramen_ratings_test_model(model, df):
     numeric_features = X.columns[X.dtypes == "float32"]
     categorical_features = ["brand", "style", "country"]
 
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
+
     # Select only columns you want
     X = X[numeric_features + categorical_features]
 
-    preds = model.predict(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    print("Sample predictions vs actuals:")
-    for pred, actual in zip(preds[:5], y.iloc[:5]):
-        print(f"Predicted: {pred:.3f}, Actual: {actual:.3f}")
+    y_pred = model.predict(X_test)
+
+    print(classification_report(y_test, y_pred))
 
 
 def multisim_dataset_test_model(model, df):
@@ -68,20 +78,22 @@ def multisim_dataset_test_model(model, df):
     numeric_features = X.columns[X.dtypes == "float64"].append(X.columns[X.dtypes == "int64"])
     categorical_features = X.columns[X.dtypes == "object"]
 
+    numeric_features = list(numeric_features)
+    categorical_features = list(categorical_features)
     # Select only columns you want
     X = X[numeric_features + categorical_features]
 
-    preds = model.predict(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    print("Sample predictions vs actuals:")
-    for pred, actual in zip(preds[:5], y.iloc[:5]):
-        print(f"Predicted: {pred:.3f}, Actual: {actual:.3f}")
+    y_pred = model.predict(X_test)
+
+    print(classification_report(y_test, y_pred))
 
 
 def data_usage_production_test():
     base_path = r"C:\Users\user\azercell_project1\src\data"
     model_path = r"C:\Users\user\azercell_project1\src\models"
-    model_path = os.path.join(model_path, "train_model.pkl")
+    model_path = os.path.join(model_path, "data_usage_production_train_model.pkl")
     data_path = os.path.join(base_path, "data_usage_production.pkl")
 
     model = load_model(model_path)
@@ -92,8 +104,8 @@ def data_usage_production_test():
 def ramen_ratings_test():
     base_path = r"C:\Users\user\azercell_project1\src\data"
     model_path = r"C:\Users\user\azercell_project1\src\models"
-    model_path = os.path.join(model_path, "ramen_ratings_train_model.pkl")
-    data_path = os.path.join(base_path, "ramen_ratings.pkl")
+    model_path = os.path.join(model_path, "ramen-ratings_train_model.pkl")
+    data_path = os.path.join(base_path, "ramen-ratings.pkl")
 
     model = load_model(model_path)
     df = load_data(data_path)
